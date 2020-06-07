@@ -35,12 +35,13 @@ export default handleActions({
     [markDoneRequest]: state => state,
     [markDoneSuccess]: (state, { payload }) => {
         const tasks = state.tasks;
-        const newTasks = tasks.map(value => {
-            if (value.id === payload) {
+        const newTasks = tasks.map((value, index) => {
+            if (index === payload) {
                 value.status = "Done"
             }
             return value;
         })
+        console.log(newTasks)
         return update(state, {
             tasks: { $set: newTasks }
         })

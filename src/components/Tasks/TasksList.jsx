@@ -3,6 +3,7 @@ import { Grid, Paper, Button, Divider, Table, TableHead, TableRow, TableCell, Ta
 import { makeStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { markDoneRequest } from "../../reducers/tasks/taskReducer";
 
 const useStyles = makeStyles((theme) => ({
     tasksList: {
@@ -39,14 +40,7 @@ const useStyles = makeStyles((theme) => ({
 const TasksList = props => {
 
     const markAsDone = (id) => {
-        this.props.onMarkAsDone({
-            taskId: id, callback: err => {
-                if (err) console.log("error ocuured")
-                else {
-                    this.props.history.push("/");
-                }
-            }
-        });
+        props.onMarkAsDone({ taskId: id });
     }
     console.log("props...", props.tasks)
     const classes = useStyles();
@@ -71,12 +65,12 @@ const TasksList = props => {
                         <TableBody>
                             {props.tasks.tasks.map((value, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{++index}</TableCell>
+                                    <TableCell>{index + 1}</TableCell>
                                     <TableCell>{value.taskName}</TableCell>
                                     <TableCell><span className={value.status === "Undone" ? classes.spanUnDone : classes.spanDone}>{value.status}</span></TableCell>
                                     <TableCell>
-                                        <Button variant="contained" color="primary" className={classes.actionBtn}>Edit</Button>
-                                        <Button variant="contained" color="primary" className={classes.actionBtn} onClick={() => markAsDone(index)}>Done</Button>
+                                        <Button variant="contained" color="primary" className={classes.actionBtn} disabled={value.status === "Done" ? true : false}>Edit</Button>
+                                        {value.status !== "Done" ? <Button variant="contained" color="primary" className={classes.actionBtn} onClick={() => markAsDone(index)}>Done</Button> : null}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -85,7 +79,7 @@ const TasksList = props => {
                 </Paper>
             </Grid>
         </Grid>
-    </div>)
+    </div >)
 
 }
 
@@ -93,4 +87,7 @@ export default connect(
     state => ({
         tasks: state.tasks
     }),
+    {
+        onMarkAsDone: markDoneRequest
+    }
 )(withRouter(TasksList));

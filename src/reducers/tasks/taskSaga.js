@@ -7,6 +7,9 @@ import {
     craeteTaskRequest,
     craeteTaskSuccess,
     craeteTaskFailure,
+    markDoneRequest,
+    markDoneSuccess,
+    markDoneFailure
 
 } from './taskReducer';
 
@@ -14,8 +17,6 @@ import {
 function* createTasksWorker({ payload }) {
     const { postData, callback } = payload
     try {
-        console.log("task Value", postData)
-        
         if (callback) callback(null, postData);
         yield put(craeteTaskSuccess(postData));
     } catch (err) {
@@ -24,8 +25,19 @@ function* createTasksWorker({ payload }) {
     }
 }
 
+function* markDoneWorker({ payload }) {
+    const { taskId } = payload;
+    console.log("task id is.....", taskId)
+    try {
+        yield put(markDoneSuccess(taskId));
+    } catch (err) {
+        yield put(markDoneFailure(err));
+    }
+}
+
 export function* taskSaga() {
     yield all([
-        takeEvery(craeteTaskRequest, createTasksWorker)
+        takeEvery(craeteTaskRequest, createTasksWorker),
+        takeEvery(markDoneRequest, markDoneWorker)
     ]);
 }
